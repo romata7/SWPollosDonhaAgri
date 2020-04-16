@@ -112,6 +112,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <% var mostrar = -1 %>
                     <% for(var i = comas.length - 1; i >= 0; i-- ){ %>
                     <tr>
                         <td><%= comas[i].id_coma %></td>
@@ -125,6 +126,9 @@
                                 onclick="eliminarComanda('<%= JSON.stringify(comas[i]) %>')">
 
                         </td>
+                        <% if(mostrar == -1){ %>
+                        <% mostrar = comas[i].id_coma; %>
+                        <% } %>
                     </tr>
                     <% } %>
                 </tbody>
@@ -157,6 +161,12 @@
         </div>
     </div>
 </div>
+
+<% if(mostrar != -1 ){ %>
+<script>
+    $("#detalle").load('/detalle/' + '<%= mostrar %>');
+</script>
+<% } %>
 
 <script>
     $("a").click(() => {
@@ -195,7 +205,6 @@
         $("#modal_del_coma").modal('show');
     }
 
-    $("#detalle").load('/detalle/' + '<%= comas[comas.length -1].id_coma %>');
     function mostrarDetalle(id) {
         $("#detalle").load('/detalle/' + id);
     }
