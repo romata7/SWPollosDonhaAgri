@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <% if(detalles.length > 0) { %>
+            <table class="table table-hover table-sm">
+                <h6 align="center">Nro. Comanda: <%= detalles[0].id_coma %> </h6 align="center">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Cant.</th>
+                        <th>Prod.</th>
+                        <th>Costo</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var suma = 0 %>
+                    <% for( var i = 0; i < detalles.length; i++) { %>
+                    <% suma = suma + detalles[i].total %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td align="center"><%= detalles[i].cant %></td>
+                        <td><%= detalles[i].producto %></td>
+                        <td><%= parseFloat(detalles[i].costo).toFixed(2) %></td>
+                        <td><%= parseFloat(detalles[i].total).toFixed(2) %></td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td> </td>
+                        <td></td>
+                        <td> </td>
+                        <td>Total:</td>
+                        <td><%= suma.toFixed(2) %></td>
+                    </tr>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+    </div>
+</div>

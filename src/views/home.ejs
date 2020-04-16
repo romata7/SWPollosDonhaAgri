@@ -1,0 +1,301 @@
+<%- include('header') -%>
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-9">
+            <!-- datos -->
+            <table class="table table-hover table-sm">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th>Cant.</th>
+                        <th>Producto</th>
+                        <th>Prec. Unit.</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var suma = 0; %>
+                    <% for(var i = prods.length - 1; i >= 0; i--) { %>
+                    <tr>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend"
+                                    onclick="operar('-','<%= prods[i].id %>','<%= prods[i].costo %>')">
+                                    <span class="input-group-text">-</span>
+                                </div>
+                                <input type="number" step="1" class="form-control text-center" required value="0"
+                                    min="0" id="cant_<%= prods[i].id %>">
+                                <div class="input-group-append"
+                                    onclick="operar('+','<%= prods[i].id %>','<%= prods[i].costo %>')">
+                                    <span class="input-group-text">+</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td id="prod_<%= prods[i].id %>"><%= prods[i].producto %></td>
+                        <td id="costo_<%= prods[i].id %>"><%= (prods[i].costo).toFixed(2) %> </td>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <input type="text" disabled class="form-control text-center"
+                                    id="subtotal_<%= prods[i].id %>" value="0.00">
+                            </div>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Total:</td>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="total" class="form-control input-group-text" disabled
+                                    value="0.00">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12 col-sm-12 col-md-5 col-lg-4 col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <div class="input-group sm">
+                        <input type="text" class="form-control" placeholder="Comensal" id="comensal" autofocus>
+                    </div>
+                </div>
+                <div class="body">
+                    <div id="recibo" class="ml-3 ">
+
+                    </div>
+                </div>
+                <div class="card-footer text-center" id="card-footer">
+                    <button class="btn btn-success" data-toggle="modal" data-target="#modal_cobrar">Cobrar</button>
+                    <!-- The Modal -->
+                    <div class="modal" id="modal_cobrar">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Registrar Comanda</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <div id="modal_recibo"></div>
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button class="btn btn-success" id="btn_registrar">Registrar</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/" class="btn btn-secondary">Limpiar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6- col-xl-6">
+            <table class="table table-sm table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th class="text-center">Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(var i = comas.length - 1; i >= 0; i-- ){ %>
+                    <tr>
+                        <td><%= comas[i].id_coma %></td>
+                        <td><%= comas[i].user %></td>
+                        <td><%= (new Date(comas[i].fecha)).toLocaleString('Es-Pe') %></td>
+                        <td><%= (comas[i].total).toFixed(2) %></td>
+                        <td class="text-center">
+                            <img src="img/icons8_eye_30px_1.png" height="22" alt="ver"
+                                onclick="mostrarDetalle('<%= comas[i].id_coma %>')">
+                            <img src="img/icons8_remove_30px.png" alt="eliminar Comanda"
+                                onclick="eliminarComanda('<%= JSON.stringify(comas[i]) %>')">
+
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div class=" col-12 col-sm-12 col-md-6 col-lg-6- col-xl-6">
+            <div id="detalle"></div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_del_coma">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Eliminar Comanda</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="modal_del_user">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="modal_del_fecha">
+                </div>
+                <div id="detalle_modal"></div>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn btn-danger" id="modal_btn_del">Eliminar</a>
+                <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("a").click(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+    function print_div(id_div) {
+        var divToPrint = document.getElementById(id_div).innerHTML;
+        var newWin = window.open("", 'print', 'height=600, width=800');
+
+        newWin.document.write('<html><head><title>Voucher - Pollos Doña Angri </title>');
+        newWin.document.write('</head><body >');
+        newWin.document.write(divToPrint);
+        newWin.document.write('</body></html>')
+
+        newWin.document.close();
+        newWin.focus();
+
+        newWin.print();
+        newWin.close();
+
+        return true;
+    };
+    $("#modal_btn_del").click(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+    function eliminarComanda(coma) {
+        coma = JSON.parse(coma);
+        $("#modal_del_user").val(coma.user);
+        $("#modal_del_fecha").val((new Date(coma.fecha)).toLocaleString('Es-Pe').replace(/[/]/g, '-'));
+        var id = coma.id_coma;
+
+        $("#detalle_modal").load('/detalle/' + id);
+        $("#modal_btn_del").attr('href', '/comanda/del/' + id);
+        $("#modal_del_coma").modal('show');
+    }
+
+    $("#detalle").load('/detalle/' + '<%= comas[comas.length -1].id_coma %>');
+    function mostrarDetalle(id) {
+        $("#detalle").load('/detalle/' + id);
+    }
+    $("#btn_registrar").click(() => {
+        $("#hermitcrab").show()
+        $("#contenido").hide()
+        $.post('/comanda/save', comanda, data => {
+            print_div('recibo');
+            location.reload();
+        })
+    })
+
+    $("#card-footer").hide();
+    $("#comensal").keyup(() => {
+        $("#comensal").val($("#comensal").val().toUpperCase())
+        datos();
+    })
+
+    var detallado = [];
+    var comanda = {};
+    var suma = 0;
+    var fecha = "";
+
+    function datos() {
+        fecha = new Date();
+        detallado = [];
+        var subs = $("[id^='subtotal_'");
+        for (var i = 0; i < subs.length; i++) {
+            var str = subs[i].id;
+            var id = str.substring(9, 11);
+            if (parseInt($("#cant_" + id).val()) > 0) {
+                var det = {
+                    id_coma: "<%= id_coma %>",
+                    cant: $("#cant_" + id).val(),
+                    producto: $("#prod_" + id).text(),
+                    costo: $("#costo_" + id).text(),
+                    total: $("#subtotal_" + id).val(),
+                }
+                detallado.push(det);
+            }
+        }
+        if (suma > 0) {
+            $("#recibo").show();
+            $("#card-footer").show();
+            comanda = {
+                id_coma: "<%= id_coma %>",
+                user: $("#comensal").val(),
+                fecha: fecha,
+                detallado: JSON.stringify(detallado),
+                total: suma,
+            };
+
+            $("#recibo").load('/recibo', comanda, () => {
+                $("#modal_recibo").empty();
+                $("#recibo").clone(true).appendTo($("#modal_recibo"));
+            });
+        } else {
+            $("#card-footer").hide();
+            $("#recibo").hide();
+        }
+    }
+
+    function total() {
+        var subs = $("[id^='subtotal_'");
+        suma = 0;
+        for (var i = 0; i < subs.length; i++) {
+            suma = suma + parseFloat(subs[i].value);
+        };
+        $("#total").val(suma.toFixed(2));
+        datos();
+    }
+
+    $("[id^='cant_']").keyup(input => {
+        var str = input.target.id;
+        var id = str.substring(5, 7);
+        var costo = parseFloat($("#costo_" + id).text());
+        subtotal(id, costo);
+    })
+    $("[id^='cant_']").click(input => {
+        var str = input.target.id;
+        var id = str.substring(5, 7);
+        var costo = parseFloat($("#costo_" + id).text());
+        subtotal(id, costo);
+    })
+
+    function subtotal(id, costo) {
+        var cant = parseInt($("#cant_" + id).val());
+        var subtotal = parseFloat(costo) * cant;
+        $("#subtotal_" + id).val(subtotal.toFixed(2));
+        total();
+    }
+
+    function operar(signo, id, costo) {
+        if (signo == '+') {
+            $("#cant_" + id).val(parseInt($("#cant_" + id).val()) + 1);
+        } else
+            if (parseInt($("#cant_" + id).val()) > 0)
+                $("#cant_" + id).val(parseInt($("#cant_" + id).val()) - 1);
+        subtotal(id, costo);
+    }
+</script>
+
+<%- include('footer') -%>

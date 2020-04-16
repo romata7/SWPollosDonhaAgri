@@ -1,0 +1,130 @@
+<%- include('header') -%>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-5 col-lg-4 col-xl-3 mt-3">
+            <div class="card">
+                <div class="card-header">Agregar Egreso</div>
+                <form action="/egreso/save" method="POST">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input name="concepto" type="text" class="form-control" placeholder="Concepto">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" step="0.01" class="form-control" name="monto" placeholder="Monto">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-success btn-block">Agregar</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-9 mt-3">
+            <table class="table table-hover table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                        <th class="text-center">Operación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% suma = 0 %>
+                    <% for(var i = egresos.length - 1; i >= 0; i--){ %>
+                    <% suma = suma +  egresos[i].monto %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= egresos[i].fecha.toLocaleString('Es-Pe') %></td>
+                        <td><%= egresos[i].concepto %></td>
+                        <td><%= parseFloat(egresos[i].monto).toFixed(2) %></td>
+                        <td class="text-center">
+                            <!-- Eliminar Egreso -->
+                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                data-target="#modal_egre_del_<%= egresos[i].id_egre %>">Eliminar</button>
+                            <div class="modal" id="modal_egre_del_<%= egresos[i].id_egre %>">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4>Eliminar Egreso</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control"
+                                                    value="<%= egresos[i].concepto %>" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" value="<%= egresos[i].monto %>"
+                                                    disabled>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="/egreso/del/<%= egresos[i].id_egre %>"
+                                                class="btn btn-danger">Eliminar</a>
+                                            <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--  -->
+                            <!-- Modificar Egreso -->
+                            <button class="btn btn-secondary btn-sm" data-toggle="modal"
+                                data-target="#modal_egre_edit_<%= egresos[i].id_egre %>">Editar</button>
+                            <div class="modal" id="modal_egre_edit_<%= egresos[i].id_egre %>">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4>Modificar Egreso</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/egreso/edit/<%= egresos[i].id_egre %>" method="POST">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control"
+                                                        value="<%= egresos[i].concepto %>" name="concepto" required
+                                                        placeholder="Concepto">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="number" step="0.01" class="form-control"
+                                                        value="<%= egresos[i].monto %>" placeholder="Monto" required
+                                                        name="monto">
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-success" type="submit">Modificar</button>
+                                            <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="font-weight-bold">Total</td>
+                        <td class="font-weight-bold"><%= suma.toFixed(2) %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') -%>
+
+<script>
+    $("form").submit(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+    $("a").click(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+</script>

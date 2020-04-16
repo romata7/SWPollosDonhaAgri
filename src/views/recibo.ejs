@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="text-center">
+        POLLOS DOÑA AGRI - <%= datos.id_coma %> <br>
+        <%= datos.user %> <br>
+        <%= (new Date(datos.fecha)).toLocaleString('Es-Pe') %>
+
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cant. </th>
+                    <th>Producto</th>
+                    <th>P. Unit.</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i = 0; i < detallado.length; i ++) { %>
+                <tr>
+                    <td><%= detallado[i].cant %></td>
+                    <td><%= detallado[i].producto%></td>
+                    <td><%= detallado[i].costo %></td>
+                    <td><%= detallado[i].total %></td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Total</td>
+                    <td><%= (parseFloat(datos.total)).toFixed(2) %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

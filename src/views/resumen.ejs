@@ -1,0 +1,134 @@
+<%- include('header') -%>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-5 col-lg-4 col-xl-3 mt-3">
+            <div class="card">
+                <div class="card-header">
+                    Por Fechas
+                </div>
+                <form action="/resumen/buscar" method="post">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="fechaInicio">Desde:</label>
+                            <input type="date" class="form-control" name="fechaInicio" value="<%= f1 %>">
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaFin">Hasta:</label>
+                            <input type="date" class="form-control" name="fechaFin" value="<%= f2 %>">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-success btn-block">Buscar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        Resumen
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="tingreso">Total Ingreso:</label>
+                            <input type="number" class="form-control" id="tingreso" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="tegreso">Total Egreso:</label>
+                            <input type="number" class="form-control" id="tegreso" disabled>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="number" class="form-control" id="ttotal" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-9 mt-3">
+            <% if(detalles.length > 0) { %>
+            <table class="table table-hover table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#Comanda</th>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>cant.</th>
+                        <th>Producto</th>
+                        <th>Costo</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var suma = 0 %>
+                    <% for(var i = detalles.length - 1; i >= 0; i--){ %>
+                    <% suma = suma + detalles[i].costo %>
+                    <tr>
+                        <td><%= detalles[i].id_coma %></td>
+                        <td><%= (detalles[i].fecha.toLocaleString('Es-Pe')) %></td>
+                        <td><%= detalles[i].user %></td>
+                        <td><%= detalles[i].cant %></td>
+                        <td><%= detalles[i].producto %></td>
+                        <td><%= parseFloat(detalles[i].costo).toFixed(2) %></td>
+                        <td><%= parseFloat(detalles[i].total).toFixed(2) %></td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="font-weight-bold">Total:</td>
+                        <td class="font-weight-bold"><%= suma.toFixed(2) %></td>
+                        <script>
+                            $("#tingreso").val('<%= suma.toFixed(2) %>')
+                        </script>
+                    </tr>
+                </tbody>
+            </table>
+            <% } %>
+            <% if(egresos.length > 0) { %>
+            <table class="table table-hover table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var suma_egreso = 0 %>
+                    <% for(var i = egresos.length - 1; i >= 0; i--) { %>
+                    <% suma_egreso = suma_egreso + egresos[i].monto %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= egresos[i].concepto %></td>
+                        <td><%= parseFloat(egresos[i].monto).toFixed(2) %></td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td></td>
+                        <td class="font-weight-bold">Total:</td>
+                        <td class="font-weight-bold"><%= suma_egreso.toFixed(2) %></td>
+                        <script>
+                            $("#tegreso").val('<%= suma_egreso.toFixed(2) %>')
+                            $("#ttotal").val('<%= (suma - suma_egreso).toFixed(2) %>')
+                        </script>
+                    </tr>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') -%>
+
+<script>
+    $("form").submit(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+    $("a").click(() => {
+        $("#hermitcrab").show();
+        $("#contenido").hide();
+    })
+</script>
